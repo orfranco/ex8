@@ -56,8 +56,7 @@ def _helper_constraint_satisfaction(n, blocks, curr_block, curr_row, all_opt, ad
             curr_row = curr_row + [0]
     else:
         curr_row = curr_row + [0]
-
-
+        
     #recursive step
     if curr_block != len(blocks):
         _helper_constraint_satisfaction(n,blocks,curr_block, curr_row, all_opt,True)
