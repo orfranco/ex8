@@ -37,12 +37,18 @@ def constraint_satisfactions(n: int, blocks: List[int]) -> List[List[int]]:
         _helper_constraint_satisfaction(n,blocks, 0, [], lst, False)
         _helper_constraint_satisfaction(n,blocks, 0, [], lst, True)
     return lst
-def check_space(num_chars_left, left_blocks):
-    return sum(left_blocks) + len(left_blocks)-1 <= num_chars_left
+def check_space(num_chars_left, curr_block, blocks):
+    # not with sum because its more efficient.
+    sum = 0
+    left_blocks_counter = 0
+    for i in range(curr_block, len(blocks)):
+        sum += blocks[i]
+        left_blocks_counter += 1
+    return sum + left_blocks_counter-1 <= num_chars_left
 
 def _helper_constraint_satisfaction(n, blocks, curr_block, curr_row, all_opt, add_block):
     # base case
-    if len(curr_row) > n or not check_space(n - len(curr_row), blocks[curr_block:]):
+    if len(curr_row) > n or not check_space(n - len(curr_row), curr_block, blocks):
         return
     elif len(curr_row) == n and curr_block == len(blocks):
         all_opt.append(curr_row)
@@ -64,7 +70,7 @@ def _helper_constraint_satisfaction(n, blocks, curr_block, curr_row, all_opt, ad
     return all_opt
 
 
-print(constraint_satisfactions(6,[1,3]))
+print(constraint_satisfactions(5,[1,1,1]))
 
 #or check_space(n - len(curr_row), blocks[curr_block:])
 
