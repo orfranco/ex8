@@ -85,6 +85,7 @@ def _helper_constraint_satisfaction(n, blocks, curr_block, curr_row, all_opt):
 def row_variations(row: List[int], blocks: List[int]) -> List[List[int]]:
     """
     TODO: add general description
+    TODO: blocks contain [-1]?
     :param row: a list of 1,0,-1 representing the state of the row.
     1 - filled cell.
     0 - empty cell.
@@ -310,5 +311,6 @@ def solve_easy_nonogram(constraints: List[List[List[int]]]) ->\
     return board
     #TODO: better solution that will not run the same code (functions).
     #TODO: think if this solution fills all the possibilities are we need to do row_variations repeatedley until there is no change.
+    #TODO: NO SOLUTION
 
-
+#solve_easy_nonogram([[[2,2],[2],[1],[3],[3]],[[2],[2],[2],[1,2],[1,6]]])

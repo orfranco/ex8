@@ -21,6 +21,7 @@ def test_constraint_satisfactions():
 def test_row_variations():
     assert sorted(row_variations([-1, -1, -1, 0], [2])) == sorted(
         [[1, 1, 0, 0], [0, 1, 1, 0]])
+    assert sorted(row_variations([-1, -1, -1, 0], [5])) == []
     assert sorted(row_variations([-1, -1, -1, -1], [3])) == sorted(
         [[1, 1, 1, 0], [0, 1, 1, 1]])
     assert sorted(row_variations([-1, -1, -1, -1], [1, 1])) == sorted(
@@ -39,9 +40,7 @@ def test_row_variations():
     assert sorted(row_variations([], [1, 1])) == []
 
     assert sorted(
-        row_variations([-1, 0, 1, 0, -1, -1, -1, -1, -1], [1, 3])) == sorted(
-        [[0, 0, 1, 0, 1, 1, 1, 0, 0], [0, 0, 1, 0, 0, 1, 1, 1, 0],
-         [0, 0, 1, 0, 0, 0, 1, 1, 1]])
+        row_variations([-1, 0, 1, 0, -1, -1, -1, -1, -1], [1, 3])) == sorted([[0, 0, 1, 0, 1, 1, 1, 0, 0], [0, 0, 1, 0, 0, 1, 1, 1, 0],[0, 0, 1, 0, 0, 0, 1, 1, 1]])
     assert sorted(
         row_variations(
             [0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -52,6 +51,10 @@ def test_row_variations():
         row_variations(
             [0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
              1, 1, 1, 1], [1, 7, 5])) == []
+    assert sorted(
+        row_variations(
+            [0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+             1, 1, 1, 1], [1, 7])) == []
 
 
 def test_intersection_row():
