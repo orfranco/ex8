@@ -4,53 +4,48 @@
 # DESCRIPTION:
 ##############################################################################
 from typing import List, Optional
-"""
-def all_options_filtered(n):
-    if n == 0:
-        return []
-    if n == 1:
-        return ['0','1']
 
-    options = []
-    for opt in all_options_filtered(n-1):
-        if opt[-1] != '1':
-            options.append(opt+'1')
-        options.append(opt+'0')
-    return options
-"""
+# Constants:
 ROW_INDEX = 0
 COL_INDEX = 1
 COLORED_CELL = 1
 EMPTY_CELL = 0
 UNFILLED_CELL = -1
 
+
 def constraint_satisfactions(n: int, blocks: List[int]) -> List[List[int]]:
     """
+    TODO: add general description
     :param n: the length of the row - positive int.
     :param blocks: the constraints on a row. every number in the list is a
                     sequence of cells to be filled.
     :return: all filling options of a row with the given constraints. doesn't
             matter the order.
     """
-    lst = []
+    lst: List = []
+
     if blocks and n > 0:
         _helper_constraint_satisfaction(n,blocks, 0, [], lst)
+
     return lst
 
 
-def check_space(curr_block, blocks):
+def check_space(curr_block: int, blocks: List[int]) -> int:
+    # TODO: Add docstring
     # not with sum because its more efficient.
-    sum = 0
+    summ: int = 0
     left_blocks_counter = 0
+
     for i in range(curr_block, len(blocks)):
-        sum += blocks[i]
+        summ += blocks[i]
         left_blocks_counter += 1
-    return sum + left_blocks_counter-1
+
+    return summ + left_blocks_counter-1
 
 
-def _helper_constraint_satisfaction(n,blocks,curr_block,curr_row,all_opt):
+def _helper_constraint_satisfaction(n, blocks, curr_block, curr_row, all_opt):
     """
-
+    TODO: add general description
     :param n:
     :param blocks:
     :param curr_block:
@@ -89,6 +84,7 @@ def _helper_constraint_satisfaction(n,blocks,curr_block,curr_row,all_opt):
 
 def row_variations(row: List[int], blocks: List[int]) -> List[List[int]]:
     """
+    TODO: add general description
     :param row: a list of 1,0,-1 representing the state of the row.
     1 - filled cell.
     0 - empty cell.
@@ -98,51 +94,55 @@ def row_variations(row: List[int], blocks: List[int]) -> List[List[int]]:
     :return: all filling options of the undefined cells in the given row
                     with the given constraints.
     """
-    lst = []
-    # if check_space(0,blocks) > row.count(-1) + row.count(1):
-    #     return []
+    lst: List = []
+
     if blocks and len(row) > 0:
-        _helper_row_variations(row, blocks, 0, [], lst,0)
+        _helper_row_variations(row, blocks, 0, [], lst, 0)
+
     return lst
 
 
 def _helper_row_variations(row, blocks, curr_block, curr_row, all_opt, curr_index):
-
+    # TODO: Add docstring.
+    # TODO: Add type hints.
     is_good_for_1 = True
-    # will remain false as long as the current block is not done:
+    # Will remain false as long as the current block is not done:
     is_good_for_0 = False
-    # 1 INSERTED:
+
+    # 1 was Inserted:
     if len(curr_row) > 0 and curr_row[-1]:  # not 0
         pivot_index = get_pivot(curr_row)
-        # if current block is completed:
+        # If current block is completed:
         if (curr_index - pivot_index) == blocks[curr_block]:
-            # check if its the end of the row or
-            # make sure there isn't an extra 1 after the block:
+            # Check if its the end of the row,
+            # Or make sure there isn't an extra 1 after the block:
             if curr_index <= len(row) or row[curr_index] != 1:
                 curr_block += 1
-                # make sure we only add 0 after we finished a block:
+                # Make sure we only add 0 after we finished a block:
                 is_good_for_1 = False
                 is_good_for_0 = True
-            else:  # found extra 1, this solution is invalid:
+            else:  # Found extra 1, this solution is invalid:
                 return
-    # 0 INSERTED
+
+    # 0 was Inserted
     else:
         is_good_for_0 = True
         # if the total block size is bigger than the number of
         # remaining cells, the solution is invalid:
-        if sum_of_remain_blocks(curr_block, blocks) > count_row_editable_cells(curr_index, row):
+        if sum_of_remaining_blocks(curr_block, blocks) >\
+                count_row_editable_cells(curr_index, row):
             return
 
-    # check if all blocks were inserted:
+    # Check if all blocks were inserted:
     if curr_block >= len(blocks):
-        # make sure there are no more 1's in the remaining cells,
-        # if True the solution is invalid, if False fill rest of cells with 0:
+        # Make sure there are no more 1's in the remaining cells,
+        # If True the solution is invalid, if False fill rest of cells with 0:
         if find_1_in_row(row, curr_index):
             return
         else:
             curr_row += [0] * (len(row) - curr_index)
 
-    # base case:
+    # Base case:
     if len(curr_row) == len(row):
         all_opt.append(curr_row)
         return
@@ -171,61 +171,93 @@ def _helper_row_variations(row, blocks, curr_block, curr_row, all_opt, curr_inde
     return all_opt
 
 
-def get_pivot(curr_row):
+def get_pivot(curr_row: List[int]) -> int:
+    """
+    TODO: add general description
+    :param curr_row:
+    :return:
+    """
     pivot_index = len(curr_row)
-    for i in range(len(curr_row)-1,-1,-1):
+
+    for i in range(len(curr_row) - 1, -1, -1):
         if curr_row[i] == 0:
             break
+
         pivot_index -= 1
 
     return pivot_index
 
 
-def sum_of_remain_blocks(curr_block, blocks):
-    sum = 0
+def sum_of_remaining_blocks(curr_block: int, blocks: List[int]) -> int:
+    """
+    TODO: add general description
+    :param curr_block:
+    :param blocks:
+    :return:
+    """
+    summ: int = 0
 
     for i in range(curr_block, len(blocks)):
-        sum += blocks[i]
-    return sum
+        summ += blocks[i]
+
+    return summ
 
 
-def count_row_editable_cells(curr_index,row):
+def count_row_editable_cells(curr_index: int, row: List[int]) -> int:
+    """
+    TODO: add general description
+    :param curr_index:
+    :param row:
+    :return:
+    """
     counter = 0
-    for i in range(curr_index,len(row)):
+
+    for i in range(curr_index, len(row)):
         if row[i] != 0:
-            counter+=1
+            counter += 1
+
     return counter
 
 
 def find_1_in_row(row,curr_index):
+    # TODO: Add docstring.
+    # TODO: Add type hints.
     for i in range(curr_index,len(row)):
         if row[i] == 1:
             return True
+
     return False
 
 
 def intersection_row(rows: List[List[int]]) -> List[int]:
     """
     TODO: explain about the case when a row contains -1.
+    # TODO: Add general description.
     :param rows: a List of rows containing 0,1,-1.
     :return: a list representing a row which slices all of the input rows.
     0 - if on all the rows, 0 was on this specific curr_index.
     1 - if on all the rows, 1 was on this specific curr_index.
     -1 - if it was undicisive.
     """
-    intersected_row = len(rows[0])*[UNFILLED_CELL]
+    intersected_row = len(rows[0]) * [UNFILLED_CELL]
+
     for cell in range(len(rows[0])):
         curr_cell_value = rows[0][cell]
+
         for row in range(len(rows)-1):
             # found rows with different values in the same column:
             if rows[row][cell] != rows[row+1][cell]:
                 curr_cell_value = UNFILLED_CELL
+
         intersected_row[cell] = curr_cell_value
+
     return intersected_row
 
 
-def transpose(board):
-    return [[board[j][i] for j in range(len(board))] for i in range(len(board[0]))]
+def transpose(board: List[List[int]]) -> List[List[int]]:
+    # TODO: Add docstring.
+    return [[board[j][i] for j in range(len(board))]
+            for i in range(len(board[0]))]
 
 
 def solve_easy_nonogram(constraints: List[List[int]]) ->\
