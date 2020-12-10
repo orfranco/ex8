@@ -260,7 +260,7 @@ def transpose(board: List[List[int]]) -> List[List[int]]:
             for i in range(len(board[0]))]
 
 
-def solve_easy_nonogram(constraints: List[List[int]]) ->\
+def solve_easy_nonogram(constraints: List[List[List[int]]]) ->\
                                                 Optional[List[List[int]]]:
     """
     possible_rows = constraint_satisfactions(row from constraints[ROW_INDEX]) for every row
@@ -269,27 +269,6 @@ def solve_easy_nonogram(constraints: List[List[int]]) ->\
     TODO: think how to get columns from board.
     possible_cols = row_variations(col from board, constraints[COL_INDEX]) for every col
     TODO: think if its the only case where the board is unsolvable.
-    """
-    row_num = len(constraints[ROW_INDEX])
-    col_num = len(constraints[COL_INDEX])
-    board = []
-
-    #  Generate raw board from row constraints:
-    for block in constraints[ROW_INDEX]:
-        possible_rows = constraint_satisfactions(row_num, block)
-        board.append(intersection_row(possible_rows))
-    print(board)
-    board = transpose(board)
-    print(board)
-    for col_index,block in enumerate(constraints[COL_INDEX]):
-        possible_cols = row_variations(board[col_index],block)
-        board[col_index] = intersection_row(possible_cols)
-
-    print(board)
-    board = transpose(board)
-    print(board)
-    """
-   
     if possible_cols == []:
         return None
     else:
@@ -310,7 +289,26 @@ def solve_easy_nonogram(constraints: List[List[int]]) ->\
     :param constraints:
     :return:
     """
+    row_num = len(constraints[ROW_INDEX])
+    col_num = len(constraints[COL_INDEX])
+    board = []
+
+    #  Generate raw board from row constraints:
+    for block in constraints[ROW_INDEX]:
+        possible_rows = constraint_satisfactions(row_num, block)
+        board.append(intersection_row(possible_rows))
+    board = transpose(board)
+    for col_index,block in enumerate(constraints[COL_INDEX]):
+        possible_cols = row_variations(board[col_index],block)
+        board[col_index] = intersection_row(possible_cols)
+    board = transpose(board)
+    for row_index,block in enumerate(constraints[ROW_INDEX]):
+        possible_rows = row_variations(board[row_index], block)
+        board[row_index] = intersection_row(possible_rows)
+
+    print(board)
+    return board
+    #TODO: better solution that will not run the same code (functions).
 
 
-solve_easy_nonogram([[[2],[1],[2],[4],[4]],[[2],[3],[3],[2,2],[1]]])
 
