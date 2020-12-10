@@ -309,6 +309,6 @@ def solve_easy_nonogram(constraints: List[List[List[int]]]) ->\
     print(board)
     return board
     #TODO: better solution that will not run the same code (functions).
-
+    #TODO: think if this solution fills all the possibilities are we need to do row_variations repeatedley until there is no change.
 
 
