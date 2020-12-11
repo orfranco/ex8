@@ -7,7 +7,7 @@
 # About intersection_row():
 #   If on a specific index on of the given rows to intersect has -1, we chose
 #   to fill the corresponding cell in the intersection with -1 as well.
-#   This choice makes more sense in out opinion and it makes it easier to use
+#   This choice makes more sense in our opinion and it makes it easier to use
 #   the output of this function in different parts of the code.
 
 
@@ -143,8 +143,6 @@ def _helper_constraint_satisfaction(n: int, blocks: List[int],
     return all_opt
 
 
-# TODO: the function returns [[]] for this test - (row_variations([], [1, 1]))
-#  the output needs to be []
 def row_variations(row: List[int], blocks: List[int]) -> List[List[int]]:
     """
     this function gets a row that is partially filled, and finds all the ways
@@ -161,9 +159,12 @@ def row_variations(row: List[int], blocks: List[int]) -> List[List[int]]:
     """
     all_variations: List[List[int]] = []
 
-    if len(row) >= 0:
+    if len(row) > 0:
         _helper_row_variations(row, blocks, 0, [], all_variations, 0)
-
+    elif len(row) == 0:
+        if len(blocks):
+            return []
+        return [[]]
     return all_variations
 
 
@@ -395,7 +396,7 @@ def find_different_cells(new_line: List[int], old_line: List[int]) -> Set[int]:
 
 #  TODO: the return type hint is not correct - find solution
 def solve_easy_nonogram(constraints: List[List[List[int]]]) -> \
-        Optional[List[List[int]]]:
+                                Optional[List[List[int]]]:
     """
     This function uses a human-like method to solve the given nonogram puzzle,
     as best as possible:
@@ -456,7 +457,8 @@ def solve_easy_nonogram(constraints: List[List[List[int]]]) -> \
     return board
 
 
-def solve_nonogram(constraints: List[List[List[int]]]) -> List[List[List[int]]]:
+def solve_nonogram(constraints: List[List[List[int]]])\
+                                -> List[List[List[int]]]:
     """
     This function finds all possible solutions to the given nonogram puzzle,
     by using the helper function - '_helper_solve_nonogram()'.
@@ -481,7 +483,7 @@ def _helper_solve_nonogram(board: List[List[int]],
                            curr_sol: List[List[int]],
                            row_index: int,
                            all_sol: List[List[List[int]]]) -> \
-        Optional[List[List[List[int]]]]:
+                           Optional[List[List[List[int]]]]:
     """
     This function uses recursion to help 'solve_nonogram()' accomplish its task
     :param board: A partially solved nonogram board (list of rows).
@@ -511,9 +513,10 @@ def _helper_solve_nonogram(board: List[List[int]],
 
 def split_line_to_blocks(line: List[int]) -> List[int]:
     """
-    TODO: add description
-    :param line:
-    :return:
+    this function finds all the 1's blocks in a given row.
+    :param line: a row or a col in the board.
+    :return: returns a list containing ints representing
+                            blocks of 1's in the given line.
     """
     blocks: List[int] = [0]
     block_index: int = 0
@@ -531,11 +534,13 @@ def blocks_match(curr_blocks: List[int],
                  col_blocks: List[int],
                  compare_last_block: bool = True) -> bool:
     """
-    TODO: add description
-    :param curr_blocks:
-    :param col_blocks:
-    :param compare_last_block:
-    :return:
+    this function checks if the blocks that in the current column being formed,
+    fulfilling the constraints of the specific column.
+    :param curr_blocks: the blocks of 1's that was
+                        inserted to the current column.
+    :param col_blocks: the constraints of the specific column
+    :param compare_last_block: False if the last cell is 1.
+    :return: True if the blocks match.
     """
     if len(curr_blocks) > len(col_blocks):
         return False
