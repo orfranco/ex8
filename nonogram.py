@@ -24,7 +24,7 @@ def constraint_satisfactions(n: int, blocks: List[int]) -> List[List[int]]:
     """
     lst: List = []
 
-    if blocks and n > 0:
+    if n > 0:
         _helper_constraint_satisfaction(n,blocks, 0, [], lst)
 
     return lst
@@ -97,7 +97,7 @@ def row_variations(row: List[int], blocks: List[int]) -> List[List[int]]:
     """
     lst: List = []
 
-    if blocks and len(row) > 0:
+    if len(row) > 0:
         _helper_row_variations(row, blocks, 0, [], lst, 0)
 
     return lst
@@ -260,33 +260,26 @@ def transpose(board: List[List[int]]) -> List[List[int]]:
     return [[board[j][i] for j in range(len(board))]
             for i in range(len(board[0]))]
 
+def update_line(line, blocks):
+    possible_lines = row_variations(line, blocks)
+    if possible_lines:
+        updated_line = intersection_row(possible_lines)
+        return updated_line
+    return []
+
+
+def find_different_cells(new_line, old_line):
+    changed_cells = set()
+    for index in range(len(new_line)):
+        if new_line[index] != old_line[index]:
+            changed_cells.add(index)
+    return changed_cells
+
 
 def solve_easy_nonogram(constraints: List[List[List[int]]]) ->\
                                                 Optional[List[List[int]]]:
     """
-    possible_rows = constraint_satisfactions(row from constraints[ROW_INDEX]) for every row
-    insert_row  = intersection_row(possible_rows)
-    board.append(insert_row)
-    TODO: think how to get columns from board.
-    possible_cols = row_variations(col from board, constraints[COL_INDEX]) for every col
-    TODO: think if its the only case where the board is unsolvable.
-    if possible_cols == []:
-        return None
-    else:
-        insert_col  = intersection_row(possible_cols)
-    board2.append(insert_col)
-    TODO: insert as rows.
-    TODO: think about an efficient way to update the board.
-    bool is_changed = False
-    possible_rows = row_variations(row from board, constraints[ROW_INDEX]) for every row
-    if possible_rows == []:
-        return None
-    else:
-        insert_row  = intersection_row(possible_rows)
-    if insert_row != row from board:
-        is_changed = True
-    board3.append(insert_col)
-    TODO: the same for columns until the row that is returned is the same as the given, for all rows and columns.
+
     :param constraints:
     :return:
     """
@@ -296,24 +289,102 @@ def solve_easy_nonogram(constraints: List[List[List[int]]]) ->\
 
     #  Generate raw board from row constraints:
     for block in constraints[ROW_INDEX]:
-        possible_rows = constraint_satisfactions(row_num, block)
+        possible_rows = constraint_satisfactions(col_num, block)
+        # if there aren't any possibilities from the constraints:
+        if not possible_rows:
+            return
         board.append(intersection_row(possible_rows))
+
+
+    # switch rows with cols:
     board = transpose(board)
+    lines_to_check = set(range(col_num))
 
-    for col_index, block in enumerate(constraints[COL_INDEX]):
-        possible_cols = row_variations(board[col_index],block)
-        board[col_index] = intersection_row(possible_cols)
-    board = transpose(board)
+    is_cols = True
+    while True:
+        new_lines_to_check = set()
+        for line_index in lines_to_check:
+            new_line = update_line(board[line_index], constraints[is_cols][line_index])
+            # if there is a contradiction with the constraints,
+            # no new line will be created:
+            if not new_line:
+                return
+            # find the indexes of the changed_cells:
+            changed_cells = find_different_cells(new_line, board[line_index])
+            # if changes were made, update the board and
+            # the lines to check in the next iteration:
+            if changed_cells:
+                new_lines_to_check = new_lines_to_check.union(changed_cells)
+                board[line_index] = new_line
+        lines_to_check = new_lines_to_check
+        # if no changes were made, we are done!
+        if not lines_to_check:
+            break
+        # flip the board:
+        board = transpose(board)
+        is_cols = not is_cols
 
-    for row_index, block in enumerate(constraints[ROW_INDEX]):
-        possible_rows = row_variations(board[row_index], block)
-        board[row_index] = intersection_row(possible_rows)
-
-    print(board)
+    if is_cols:
+        board = transpose(board)
     return board
-    #TODO: better solution that will not run the same code (functions).
-    #TODO: think if this solution fills all the possibilities are we need to do row_variations repeatedley until there is no change.
-    #TODO: NO SOLUTION
 
-#solve_easy_nonogram([[[2,2],[2],[1],[3],[3]],[[2],[2],[2],[1,2],[1,6]]])
-solve_easy_nonogram([[[2], [1], [2], [4], [4]], [[2], [3], [3], [2, 2], [1]]])
+def solve_nonogram(constraints):
+    board = solve_easy_nonogram(constraints)
+    all_sol = []
+    if board:
+        _helper_solve_nonogram(board, constraints, [], 0 , all_sol)
+    return all_sol
+
+def _helper_solve_nonogram(board, constraints, curr_sol, row_index, all_sol):
+    if curr_sol and not check_constraints(curr_sol, constraints[COL_INDEX]):
+        return
+    # base case:
+    if len(curr_sol) == len(board):
+        all_sol.append(curr_sol)
+        return
+
+    # recursive step:
+    for row_variation in row_variations(board[row_index],constraints[ROW_INDEX][row_index]):
+        _helper_solve_nonogram(board, constraints, curr_sol + [row_variation], row_index + 1, all_sol)
+
+    return all_sol
+
+
+def split_col_to_blocks(col):
+    blocks = [0]
+    block_index = 0
+    for cell in col:
+        blocks[block_index] += cell
+        if cell == 0 and blocks[block_index]:
+            blocks.append(0)
+            block_index += 1
+    return blocks if blocks[-1] != 0 else blocks[:-1]
+
+
+def blocks_match(curr_block, col_block, compare_last_block = True):
+    if len(curr_block) > len(col_block):
+        return False
+    last_block_to_check = len(curr_block)-1
+    for block_index in range(last_block_to_check):
+        if curr_block[block_index] != col_block[block_index]:
+            return False
+    if compare_last_block and curr_block[-1] != col_block[last_block_to_check]:
+        return False
+    elif not compare_last_block and curr_block[-1] > col_block[last_block_to_check]:
+        return False
+
+    return True
+
+def check_constraints(curr_sol, col_constraints):
+    transposed_sol = transpose(curr_sol)
+    for col_index, col in enumerate(transposed_sol):
+        blocks = split_col_to_blocks(col)
+        if blocks and not blocks_match(blocks, col_constraints[col_index], col[-1] != 1):
+            return False
+    return True
+
+
+const = [[[1], [1], [1], [1], [1]], [[1], [1], [1], [1], [1]]]
+
+print(solve_nonogram(const))
+
