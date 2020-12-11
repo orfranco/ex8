@@ -1,9 +1,9 @@
 ##############################################################################
 # FILE: nonogram.py
 # EXERCISE: intro2cs1 ex8 2020
-# DESCRIPTION: A program that solves nonogram puzzels
+# DESCRIPTION: A program that solves nonogram puzzles
 ##############################################################################
-from typing import List, Optional
+from typing import List, Optional, Set
 
 # Constants:
 ROW_INDEX = 0
@@ -13,41 +13,41 @@ EMPTY_CELL = 0
 UNFILLED_CELL = -1
 BOARD_TO_PRINT = [
     [
-        [1,1,1,1,2,1,1,1,1],
-        [2],[1,1,1,1,2,1,1,1,1],
-        [1,1,1,6,1,1,1],
-        [1,1,1,2,1,1,1],
-        [1,1,10,1,1],
-        [1,1,2,1,1],
-        [1,14,1],
-        [1,2,1],
+        [1, 1, 1, 1, 2, 1, 1, 1, 1],
+        [2], [1, 1, 1, 1, 2, 1, 1, 1, 1],
+        [1, 1, 1, 6, 1, 1, 1],
+        [1, 1, 1, 2, 1, 1, 1],
+        [1, 1, 10, 1, 1],
+        [1, 1, 2, 1, 1],
+        [1, 14, 1],
+        [1, 2, 1],
         [18],
         [2],
-        [1,2],
-        [5,2,1],
-        [3,4,5],
-        [1,6,3],
-        [8,1]
+        [1, 2],
+        [5, 2, 1],
+        [3, 4, 5],
+        [1, 6, 3],
+        [8, 1]
     ],
     [
-        [1,8,1],
-        [1,2],
-        [1,6,1,4],
-        [1,1,2],
-        [1,4,1,1,1],
-        [1,1,1,1],
-        [1,2,1,1,1,2],
-        [1,1,1,1,3],
+        [1, 8, 1],
+        [1, 2],
+        [1, 6, 1, 4],
+        [1, 1, 2],
+        [1, 4, 1, 1, 1],
+        [1, 1, 1, 1],
+        [1, 2, 1, 1, 1, 2],
+        [1, 1, 1, 1, 3],
         [16],
         [16],
-        [1,1,1,1,3],
-        [1,2,1,1,1,2],
-        [1,1,1,1],
-        [1,4,1,1,1],
-        [1,1,2],
-        [1,6,1,4],
-        [1,2],
-        [1,8,1]
+        [1, 1, 1, 1, 3],
+        [1, 2, 1, 1, 1, 2],
+        [1, 1, 1, 1],
+        [1, 4, 1, 1, 1],
+        [1, 1, 2],
+        [1, 6, 1, 4],
+        [1, 2],
+        [1, 8, 1]
     ]
 ]
 
@@ -64,7 +64,7 @@ def constraint_satisfactions(n: int, blocks: List[int]) -> List[List[int]]:
     lst: List = []
 
     if n > 0:
-        _helper_constraint_satisfaction(n,blocks, 0, [], lst)
+        _helper_constraint_satisfaction(n, blocks, 0, [], lst)
 
     return lst
 
@@ -79,7 +79,7 @@ def check_space(curr_block: int, blocks: List[int]) -> int:
         summ += blocks[i]
         left_blocks_counter += 1
 
-    return summ + left_blocks_counter-1
+    return summ + left_blocks_counter - 1
 
 
 def _helper_constraint_satisfaction(n, blocks, curr_block, curr_row, all_opt):
@@ -110,13 +110,13 @@ def _helper_constraint_satisfaction(n, blocks, curr_block, curr_row, all_opt):
     # loop through all optional cells that from them
     # we can start filling all left blocks and still match the row length.
     for i in range(space_to_fill - space_needed + 1):
-        addition = [0]*i + blocks[curr_block]*[1]
+        addition = [0] * i + blocks[curr_block] * [1]
         # add 0 after the block only if its not the end of the row:
         if len(curr_row + addition) < n:
             addition += [0]
         # recursive step:
-        _helper_constraint_satisfaction(n, blocks, curr_block+1
-                                        , curr_row + addition, all_opt)
+        _helper_constraint_satisfaction(n, blocks, curr_block + 1,
+                                        curr_row + addition, all_opt)
 
     return all_opt
 
@@ -142,7 +142,8 @@ def row_variations(row: List[int], blocks: List[int]) -> List[List[int]]:
     return lst
 
 
-def _helper_row_variations(row, blocks, curr_block, curr_row, all_opt, curr_index):
+def _helper_row_variations(row, blocks, curr_block, curr_row, all_opt,
+                           curr_index):
     # TODO: Add docstring.
     # TODO: Add type hints.
     is_good_for_1 = True
@@ -169,7 +170,7 @@ def _helper_row_variations(row, blocks, curr_block, curr_row, all_opt, curr_inde
         is_good_for_0 = True
         # if the total block size is bigger than the number of
         # remaining cells, the solution is invalid:
-        if sum_of_remaining_blocks(curr_block, blocks) >\
+        if sum_of_remaining_blocks(curr_block, blocks) > \
                 count_row_editable_cells(curr_index, row):
             return
 
@@ -284,9 +285,9 @@ def intersection_row(rows: List[List[int]]) -> List[int]:
     for cell in range(len(rows[0])):
         curr_cell_value = rows[0][cell]
 
-        for row in range(len(rows)-1):
+        for row in range(len(rows) - 1):
             # found rows with different values in the same column:
-            if rows[row][cell] != rows[row+1][cell]:
+            if rows[row][cell] != rows[row + 1][cell]:
                 curr_cell_value = UNFILLED_CELL
 
         intersected_row[cell] = curr_cell_value
@@ -299,6 +300,7 @@ def transpose(board: List[List[int]]) -> List[List[int]]:
     return [[board[j][i] for j in range(len(board))]
             for i in range(len(board[0]))]
 
+
 def update_line(line, blocks):
     possible_lines = row_variations(line, blocks)
     if possible_lines:
@@ -308,6 +310,12 @@ def update_line(line, blocks):
 
 
 def find_different_cells(new_line, old_line):
+    """
+
+    :param new_line:
+    :param old_line:
+    :return:
+    """
     changed_cells = set()
     for index in range(len(new_line)):
         if new_line[index] != old_line[index]:
@@ -315,8 +323,8 @@ def find_different_cells(new_line, old_line):
     return changed_cells
 
 
-def solve_easy_nonogram(constraints: List[List[List[int]]]) ->\
-                                                Optional[List[List[int]]]:
+def solve_easy_nonogram(constraints: List[List[List[int]]]) -> \
+        Optional[List[List[int]]]:
     """
 
     :param constraints:
@@ -334,8 +342,7 @@ def solve_easy_nonogram(constraints: List[List[List[int]]]) ->\
             return
         board.append(intersection_row(possible_rows))
 
-
-    # switch rows with cols:
+    # switch rows with columns:
     board = transpose(board)
     lines_to_check = set(range(col_num))
 
@@ -343,38 +350,58 @@ def solve_easy_nonogram(constraints: List[List[List[int]]]) ->\
     while True:
         new_lines_to_check = set()
         for line_index in lines_to_check:
-            new_line = update_line(board[line_index], constraints[is_cols][line_index])
+            new_line = update_line(board[line_index],
+                                   constraints[is_cols][line_index])
             # if there is a contradiction with the constraints,
             # no new line will be created:
             if not new_line:
                 return
-            # find the indexes of the changed_cells:
+            # Find the indexes of the changed_cells:
             changed_cells = find_different_cells(new_line, board[line_index])
             # if changes were made, update the board and
-            # the lines to check in the next iteration:
+            # the lines-to-check in the next iteration:
             if changed_cells:
                 new_lines_to_check = new_lines_to_check.union(changed_cells)
                 board[line_index] = new_line
         lines_to_check = new_lines_to_check
-        # if no changes were made, we are done!
+        # If no changes were made, we are done!
         if not lines_to_check:
             break
-        # flip the board:
+        # Flip the board:
         board = transpose(board)
         is_cols = not is_cols
 
+    # If we finished with a transposed board - switch back rows and columns:
     if is_cols:
         board = transpose(board)
     return board
 
-def solve_nonogram(constraints):
-    board = solve_easy_nonogram(constraints)
-    all_sol = []
+
+def solve_nonogram(constraints: List[List[List[int]]]) -> List[List[List[int]]]:
+    """
+
+    :param constraints:
+    :return:
+    """
+    board: List[List[int]] = solve_easy_nonogram(constraints)
+    all_solutions: List = []
+
     if board:
-        _helper_solve_nonogram(board, constraints, [], 0 , all_sol)
-    return all_sol
+        _helper_solve_nonogram(board, constraints, [], 0, all_solutions)
+
+    return all_solutions
+
 
 def _helper_solve_nonogram(board, constraints, curr_sol, row_index, all_sol):
+    """
+
+    :param board:
+    :param constraints:
+    :param curr_sol:
+    :param row_index:
+    :param all_sol:
+    :return:
+    """
     if curr_sol and not check_constraints(curr_sol, constraints[COL_INDEX]):
         return
     # base case:
@@ -383,47 +410,86 @@ def _helper_solve_nonogram(board, constraints, curr_sol, row_index, all_sol):
         return
 
     # recursive step:
-    for row_variation in row_variations(board[row_index],constraints[ROW_INDEX][row_index]):
-        _helper_solve_nonogram(board, constraints, curr_sol + [row_variation], row_index + 1, all_sol)
+    for row_variation in row_variations(board[row_index],
+                                        constraints[ROW_INDEX][row_index]):
+        _helper_solve_nonogram(board, constraints, curr_sol + [row_variation],
+                               row_index + 1, all_sol)
 
     return all_sol
 
 
-def split_col_to_blocks(col):
-    blocks = [0]
-    block_index = 0
-    for cell in col:
+def split_line_to_blocks(line: List[int]) -> List[int]:
+    """
+
+    :param line:
+    :return:
+    """
+    blocks: List[int] = [0]
+    block_index: int = 0
+
+    for cell in line:
         blocks[block_index] += cell
         if cell == 0 and blocks[block_index]:
             blocks.append(0)
             block_index += 1
+
     return blocks if blocks[-1] != 0 else blocks[:-1]
 
 
-def blocks_match(curr_block, col_block, compare_last_block = True):
+def blocks_match(curr_block, col_block, compare_last_block=True):
+    """
+
+    :param curr_block:
+    :param col_block:
+    :param compare_last_block:
+    :return:
+    """
     if len(curr_block) > len(col_block):
         return False
-    last_block_to_check = len(curr_block)-1
+
+    last_block_to_check = len(curr_block) - 1
+
     for block_index in range(last_block_to_check):
         if curr_block[block_index] != col_block[block_index]:
             return False
+
     if compare_last_block and curr_block[-1] != col_block[last_block_to_check]:
         return False
-    elif not compare_last_block and curr_block[-1] > col_block[last_block_to_check]:
+
+    elif not compare_last_block and curr_block[-1] >\
+            col_block[last_block_to_check]:
         return False
 
     return True
 
-def check_constraints(curr_sol, col_constraints):
-    transposed_sol = transpose(curr_sol)
-    for col_index, col in enumerate(transposed_sol):
-        blocks = split_col_to_blocks(col)
-        if blocks and not blocks_match(blocks, col_constraints[col_index], col[-1] != 1):
+
+def check_constraints(curr_solution, column_constraints):
+    """
+    This function checks if a given partial solution of the nonogram (given as
+    rows) meets the column constraints
+    :param curr_solution:
+    :param column_constraints:
+    :return:
+    """
+    transposed_solution: List[List[int]] = transpose(curr_solution)
+
+    for col_index, column in enumerate(transposed_solution):
+        blocks = split_line_to_blocks(column)
+        if blocks and not blocks_match(blocks,
+                                       column_constraints[col_index],
+                                       column[-1] != 1):
             return False
+
     return True
 
-def print_sol(boards):
-    print("\n"+"-"*65+"\n")
+
+def print_sol(boards: List[List[List[int]]]) -> None:
+    """
+    This function prints the solutions that were created by 'solve_nonogram'.
+    :param boards: List of solved boards. Every board is a list of list of ints
+    :return: None.
+    """
+    print("\n" + "-" * 65 + "\n")
     for board in boards:
         for row in board:
             str1 = ""
@@ -434,7 +500,3 @@ def print_sol(boards):
                     str1 += "   "
             print(str1)
     print("\n" + "-" * 65 + "\n")
-
-
-
-

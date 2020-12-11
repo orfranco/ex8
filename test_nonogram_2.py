@@ -90,14 +90,14 @@ def test_solve_easy_nonogram():
     #TODO: empty list?
 
 def test_split_col_to_blocks():
-    assert split_col_to_blocks([1,1,1,0,0,0,1]) == [3,1]
-    assert split_col_to_blocks([1,1,1]) == [3]
-    assert split_col_to_blocks([0,0,0]) == []
-    assert split_col_to_blocks([]) == []
-    assert split_col_to_blocks([1]) == [1]
-    assert split_col_to_blocks([0]) == []
-    assert split_col_to_blocks([1,1,0]) == [2]
-    assert split_col_to_blocks([1,1,0,0]) == [2]
+    assert split_line_to_blocks([1, 1, 1, 0, 0, 0, 1]) == [3, 1]
+    assert split_line_to_blocks([1, 1, 1]) == [3]
+    assert split_line_to_blocks([0, 0, 0]) == []
+    assert split_line_to_blocks([]) == []
+    assert split_line_to_blocks([1]) == [1]
+    assert split_line_to_blocks([0]) == []
+    assert split_line_to_blocks([1, 1, 0]) == [2]
+    assert split_line_to_blocks([1, 1, 0, 0]) == [2]
 
 def test_blocks_match():
     assert blocks_match([1,2],[1,2], compare_last_block=False) == True
