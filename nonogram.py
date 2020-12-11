@@ -3,6 +3,14 @@
 # EXERCISE: intro2cs1 ex8 2020
 # DESCRIPTION: A program that solves nonogram puzzles
 ##############################################################################
+
+# About intersection_row():
+#   If on a specific index on of the given rows to intersect has -1, we chose
+#   to fill the corresponding cell in the intersection with -1 as well.
+#   This choice makes more sense in out opinion and it makes it easier to use
+#   the output of this function in different parts of the code.
+
+
 from typing import List, Optional, Set
 
 # Constants:
@@ -309,7 +317,6 @@ def find_1_in_row(row: List[int], curr_index: int) -> bool:
 
 def intersection_row(rows: List[List[int]]) -> List[int]:
     """
-    TODO: explain about the case when a row contains -1.
     This function compares the given rows (list of ints) index by index,
     and creates a new row that slices all of them.
     In index i the sliced row will be:
