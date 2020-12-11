@@ -1,7 +1,7 @@
 ##############################################################################
 # FILE: nonogram.py
 # EXERCISE: intro2cs1 ex8 2020
-# DESCRIPTION:
+# DESCRIPTION: A program that solves nonogram puzzels
 ##############################################################################
 from typing import List, Optional
 
@@ -384,7 +384,7 @@ def check_constraints(curr_sol, col_constraints):
     return True
 
 def print_sol(boards):
-    print("\n----------------------------------------------------------------------------------------------------------------------------------\n")
+    print("\n"+"-"*65+"\n")
     for board in boards:
         for row in board:
             str1 = ""
@@ -394,7 +394,9 @@ def print_sol(boards):
                 else:
                     str1 += "   "
             print(str1)
-    print("\n----------------------------------------------------------------------------------------------------------------------------------\n")
+    print("\n" + "-" * 65 + "\n")
+
+
 
 constraint_targil = [[[1,1,1,1,2,1,1,1,1],[2],[1,1,1,1,2,1,1,1,1]
                       ,[1,1,1,6,1,1,1],[1,1,1,2,1,1,1],[1,1,10,1,1],
