@@ -3,7 +3,7 @@
 # EXERCISE: intro2cs1 ex8 2020
 # DESCRIPTION: A program that solves nonogram puzzles
 ##############################################################################
-from typing import List, Optional, Set, Union
+from typing import List, Optional, Set
 
 # Constants:
 ROW_INDEX = 0
