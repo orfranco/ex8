@@ -69,6 +69,9 @@ def test_intersection_row():
                                                                       -1]
     assert intersection_row([[], []]) == []
 
+
 def test_solve_easy_nonogram():
-    assert(solve_easy_nonogram([[[2,2],[2],[1],[3],[3]],[[2],[2],[2],[1,2],[1,3]]]) == [[1, 1, 0, 1, 1], [1, 1, 0, 0, 0], [0, 0, 0, 0, 1], [0, 0, 1, 1, 1], [0, 0, 1, 1, 1]])
+    assert solve_easy_nonogram([[[2,2],[2],[1],[3],[3]],[[2],[2],[2],[1,2],[1,3]]]) == [[1, 1, 0, 1, 1], [1, 1, 0, 0, 0], [0, 0, 0, 0, 1], [0, 0, 1, 1, 1], [0, 0, 1, 1, 1]]
+    # TODO: This test resutls should be changed after the function is completed !:
+    assert solve_easy_nonogram([[[2], [1], [2], [4], [4]], [[2], [3], [3], [2, 2], [1]]]) == [[0, 0, 0, 1, 1], [0, 0, 0, 1, 0], [0, 1, 1, 0, 0], [-1, 1, 1, 1, -1], [-1, 1, 1, 1, -1]]
     #TODO: empty list?

@@ -220,10 +220,10 @@ def count_row_editable_cells(curr_index: int, row: List[int]) -> int:
     return counter
 
 
-def find_1_in_row(row,curr_index):
+def find_1_in_row(row, curr_index):
     # TODO: Add docstring.
     # TODO: Add type hints.
-    for i in range(curr_index,len(row)):
+    for i in range(curr_index, len(row)):
         if row[i] == 1:
             return True
 
@@ -299,11 +299,13 @@ def solve_easy_nonogram(constraints: List[List[List[int]]]) ->\
         possible_rows = constraint_satisfactions(row_num, block)
         board.append(intersection_row(possible_rows))
     board = transpose(board)
-    for col_index,block in enumerate(constraints[COL_INDEX]):
+
+    for col_index, block in enumerate(constraints[COL_INDEX]):
         possible_cols = row_variations(board[col_index],block)
         board[col_index] = intersection_row(possible_cols)
     board = transpose(board)
-    for row_index,block in enumerate(constraints[ROW_INDEX]):
+
+    for row_index, block in enumerate(constraints[ROW_INDEX]):
         possible_rows = row_variations(board[row_index], block)
         board[row_index] = intersection_row(possible_rows)
 
@@ -314,3 +316,4 @@ def solve_easy_nonogram(constraints: List[List[List[int]]]) ->\
     #TODO: NO SOLUTION
 
 #solve_easy_nonogram([[[2,2],[2],[1],[3],[3]],[[2],[2],[2],[1,2],[1,6]]])
+solve_easy_nonogram([[[2], [1], [2], [4], [4]], [[2], [3], [3], [2, 2], [1]]])
