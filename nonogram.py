@@ -3,7 +3,7 @@
 # EXERCISE: intro2cs1 ex8 2020
 # DESCRIPTION: A program that solves nonogram puzzles
 ##############################################################################
-from typing import List, Optional, Set
+from typing import List, Optional, Set, Union
 
 # Constants:
 ROW_INDEX = 0
@@ -54,28 +54,30 @@ BOARD_TO_PRINT = [
 
 def constraint_satisfactions(n: int, blocks: List[int]) -> List[List[int]]:
     """
-    this function returns a list of rows with length n,
-                            that satisfacts all the constraints given.
+    This function returns a list of rows with length n,
+                            that meets all of the given constraints.
     :param n: the length of the row - positive int.
     :param blocks: the constraints on a row. every number in the list is a
                     sequence of cells to be filled.
     :return: all filling options of a row with the given constraints. doesn't
             matter the order.
     """
-    all_opt = []
+    all_opt: List[List[int]] = []
+
     if n > 0:
         _helper_constraint_satisfaction(n, blocks, 0, [], all_opt)
+
     return all_opt
 
 
 def check_space(curr_block: int, blocks: List[int]) -> int:
     """
-    this functions calculates the minimum number of cells
+    This functions calculates the minimum number of cells
                                     needed to match the constraints left.
-    :param curr_block: index in blocks representing the block
+    :param curr_block: Index in blocks representing the block
                         after the last block that was inserted to the row.
-    :param blocks: all the constraints given.
-    :return: the minimum number of cells needed to match the constraints left.
+    :param blocks: All the constraints given.
+    :return: The minimum number of cells needed to match the constraints left.
     """
     # not with sum() because its more efficient.
     summ = 0
@@ -88,13 +90,14 @@ def check_space(curr_block: int, blocks: List[int]) -> int:
     return summ + left_blocks_counter - 1
 
 
+#  TODO: the return type hint is not correct - find solution
 def _helper_constraint_satisfaction(n: int, blocks: List[int],
                                     curr_block: int, curr_row: List[int],
                                     all_opt: List[List[int]])\
                                     -> Optional[List[List[int]]]:
     """
-    this is a recursive function that finds all the options to
-     satisfact the constraints given in a row with length n.
+    This is a recursive function that finds all the options to
+    meet the constraints given in a row with length n.
     :param n: the length of the row.
     :param blocks: the constraints.
     :param curr_block: index in blocks needed to be inserted to curr_row.
@@ -119,7 +122,7 @@ def _helper_constraint_satisfaction(n: int, blocks: List[int],
         return
 
     # loop through all optional cells that from them
-    # we can start filling all left blocks and still match the row length.
+    # we can start filling all remaining blocks and still match the row length.
     for i in range(space_to_fill - space_needed + 1):
         addition = [0] * i + blocks[curr_block] * [1]
         # add 0 after the block only if its not the end of the row:
@@ -132,10 +135,13 @@ def _helper_constraint_satisfaction(n: int, blocks: List[int],
     return all_opt
 
 
+# TODO: the function returns [[]] for this test - (row_variations([], [1, 1]))
+#  the output needs to be []
 def row_variations(row: List[int], blocks: List[int]) -> List[List[int]]:
     """
     this function gets a row that is partially filled, and finds all the ways
-    to fill it still matching the constraints.
+    to fill it according to the given constraints, by using a helper function:
+    '_helper_row_variations'.
     :param row: a list of 1,0,-1 representing the state of the row.
     1 - filled cell.
     0 - empty cell.
@@ -145,21 +151,23 @@ def row_variations(row: List[int], blocks: List[int]) -> List[List[int]]:
     :return: all filling options of the undefined cells in the given row
                     with the given constraints.
     """
-    all_variations = []
+    all_variations: List[List[int]] = []
 
     if len(row) >= 0:
         _helper_row_variations(row, blocks, 0, [], all_variations, 0)
+
     return all_variations
 
 
-#TODO: think if we can do it better with check_constraints function.
+#  TODO: think if we can do it better with check_constraints function.
 def _helper_row_variations(row: List[int], blocks: List[int], curr_block: int,
                            curr_row: List[int], all_opt: List[List[int]],
                            curr_index: int) -> Optional[List[List[int]]]:
     """
-
+    This function uses recursion in order to help 'row_variations()'
+    accomplish its task.
     :param row: a list of 1,0,-1 representing the state of the row.
-    :param blocks: all constraints of the row needed to be formed.
+    :param blocks: all constraints on the row needed to be met.
     :param curr_block: the index of the current block needed to be
                                                     inserted to curr_row.
     :param curr_row: the current row being formed.
@@ -168,9 +176,9 @@ def _helper_row_variations(row: List[int], blocks: List[int], curr_block: int,
     :return: all filling options of the undefined cells in the given row
                     with the given constraints.
     """
-    is_good_for_1 = True
+    is_good_for_1: bool = True
     # Will remain false as long as the current block is not done:
-    is_good_for_0 = False
+    is_good_for_0: bool = False
 
     # 1 was Inserted:
     if len(curr_row) > 0 and curr_row[-1]:  # not 0
@@ -237,11 +245,12 @@ def _helper_row_variations(row: List[int], blocks: List[int], curr_block: int,
 def get_pivot(curr_row: List[int]) -> int:
     """
     this function gets a list with 1 on the last cell,
-    and returns the index of the first 1 in the sequence.
+    and returns the index of the first 1 in the list.
     :param curr_row: a row that has 1 in the last cell.
     :return: the index of the first 1 in the sequence.
     """
-    pivot_index = len(curr_row)
+    pivot_index: int = len(curr_row)
+
     for i in range(len(curr_row) - 1, -1, -1):
         if curr_row[i] == 0:
             break
@@ -257,7 +266,7 @@ def sum_of_remaining_blocks(curr_block: int, blocks: List[int]) -> int:
     :param blocks: a list of all constraints.
     :return: the sum of the values from curr_block to last index in blocks.
     """
-    summ = 0
+    summ: int = 0
 
     for i in range(curr_block, len(blocks)):
         summ += blocks[i]
@@ -272,7 +281,7 @@ def count_row_editable_cells(curr_index: int, row: List[int]) -> int:
     :param row: a list of 1,0,-1 representing the state of the row.
     :return: the number of cells that contain -1 or 1.
     """
-    counter = 0
+    counter: int = 0
 
     for i in range(curr_index, len(row)):
         if row[i] != 0:
@@ -283,8 +292,8 @@ def count_row_editable_cells(curr_index: int, row: List[int]) -> int:
 
 def find_1_in_row(row: List[int], curr_index: int) -> bool:
     """
-    this function returns true if the row contains 1 in the section between
-    curr_index till the end of the row.
+    this function returns true if the given row contains 1 at indexes bigger
+    than the given index (curr_index).
     :param row: a list of 1,0,-1 representing the state of the row.
     :param curr_index: the current index being filled in curr_row, from row.
     :return: True if the row contains 1 in the section between curr_index
@@ -301,17 +310,19 @@ def find_1_in_row(row: List[int], curr_index: int) -> bool:
 def intersection_row(rows: List[List[int]]) -> List[int]:
     """
     TODO: explain about the case when a row contains -1.
-    # TODO: Add general description.
-    :param rows: a List of rows containing 0,1,-1.
-    :return: a list representing a row which slices all of the input rows.
-    0 - if on all the rows, 0 was on this specific curr_index.
-    1 - if on all the rows, 1 was on this specific curr_index.
-    -1 - if it was undicisive.
+    This function compares the given rows (list of ints) index by index,
+    and creates a new row that slices all of them.
+    In index i the sliced row will be:
+    0 - if all rows was 0 in index i.
+    1 - if all rows was 1 in index i.
+    -1 - if the value in index i wasn't the same in all rows.
+    :param rows: A List of rows containing 0,1,-1.
+    :return: A list representing a row which slices all of the input rows.
     """
-    intersected_row = len(rows[0]) * [UNFILLED_CELL]
+    intersected_row: List[int] = len(rows[0]) * [UNFILLED_CELL]
 
     for cell in range(len(rows[0])):
-        curr_cell_value = rows[0][cell]
+        curr_cell_value: int = rows[0][cell]
 
         for row in range(len(rows) - 1):
             # found rows with different values in the same column:
@@ -324,47 +335,80 @@ def intersection_row(rows: List[List[int]]) -> List[int]:
 
 
 def transpose(board: List[List[int]]) -> List[List[int]]:
-    # TODO: Add docstring.
+    """
+    This function transposes the given board (a 2 dimensional list)
+    by switching the rows with the columns or vise versa.
+    :param board: A list of lists of ints (2 dimensional list)
+    :return: A transposed board.
+    """
     return [[board[j][i] for j in range(len(board))]
             for i in range(len(board[0]))]
 
 
-def update_line(line, blocks):
-    possible_lines = row_variations(line, blocks)
+def update_line(line: List[int], blocks: List[int]) -> List[int]:
+    """
+    This function uses 'row_variations()' to find all possible ways to fill
+    the given line (row or column) with the given blocks,
+    and then uses 'intersection_row()' to find the intersection of all filling
+    possibilities - meaning fills every cell of the given line with 1 or with 0
+    if there is one way only to fill it.
+    :param line: A row or a column (list of ints).
+    :param blocks: The constraints on the line. Every number in the list is a
+                    sequence of cells to be filled.
+    :return: An updated version of the given line - if it was possible to fill
+    some of it's cells,
+    or an empty list if there is no possible way to fill cells in the line
+    with the given blocks.
+    """
+    possible_lines: List[List[int]] = row_variations(line, blocks)
+
     if possible_lines:
         updated_line = intersection_row(possible_lines)
         return updated_line
+
     return []
 
 
-def find_different_cells(new_line, old_line):
+def find_different_cells(new_line: List[int], old_line: List[int]) -> Set[int]:
     """
+    This function compares the to given lines (rows or columns) index be index,
+    and finds the indexes of cells that are different between the two lines.
+    :param new_line: A row or column (list of ints) that was updated.
+    :param old_line: A row or column (list of ints) before the update.
+    :return: The indexes of the changed cells.
+    """
+    changed_cells: Set[int] = set()
 
-    :param new_line:
-    :param old_line:
-    :return:
-    """
-    changed_cells = set()
     for index in range(len(new_line)):
         if new_line[index] != old_line[index]:
             changed_cells.add(index)
+
     return changed_cells
 
 
+#  TODO: the return type hint is not correct - find solution
 def solve_easy_nonogram(constraints: List[List[List[int]]]) -> \
         Optional[List[List[int]]]:
     """
-
+    This function uses a human-like method to solve the given nonogram puzzle,
+    as best as possible:
+    Intersects all possibilities to fill each row according to the constrains,
+    intersects all possibilities to fill each columns,
+    and repeats this process until:
+    1. The board is solved, or
+    2. All options were exhausted (The board isn't solved completely).
+    3. A contradiction was reached (The board can't be solved under the given
+    constraints).
     :param constraints:
     :return:
     """
-    row_num = len(constraints[ROW_INDEX])
-    col_num = len(constraints[COL_INDEX])
-    board = []
+    # row_num = len(constraints[ROW_INDEX])
+    num_of_columns: int = len(constraints[COL_INDEX])
+    board: List[List[int]] = []
 
     #  Generate raw board from row constraints:
     for block in constraints[ROW_INDEX]:
-        possible_rows = constraint_satisfactions(col_num, block)
+        possible_rows = constraint_satisfactions(num_of_columns, block)
         # if there aren't any possibilities from the constraints:
         if not possible_rows:
             return
@@ -372,11 +416,11 @@ def solve_easy_nonogram(constraints: List[List[List[int]]]) -> \
 
     # switch rows with columns:
     board = transpose(board)
-    lines_to_check = set(range(col_num))
+    lines_to_check: Set[int] = set(range(num_of_columns))
 
-    is_cols = True
+    is_cols: bool = True
     while True:
-        new_lines_to_check = set()
+        new_lines_to_check: Set[int] = set()
         for line_index in lines_to_check:
             new_line = update_line(board[line_index],
                                    constraints[is_cols][line_index])
@@ -407,37 +451,49 @@ def solve_easy_nonogram(constraints: List[List[List[int]]]) -> \
 
 def solve_nonogram(constraints: List[List[List[int]]]) -> List[List[List[int]]]:
     """
-
-    :param constraints:
-    :return:
+    This function finds all possible solutions to the given nonogram puzzle,
+    by using the helper function - '_helper_solve_nonogram()'.
+    :param constraints: A list with the constrains on the rows of the nonogram
+                        and constrains on the columns of the nonogram.
+    :return: All possible solutions.
     """
-    board: List[List[int]] = solve_easy_nonogram(constraints)
-    all_solutions: List = []
+    #  Start by filling as many cells as possible using the 'easy' method:
+    board: Optional[List[List[int]]] = solve_easy_nonogram(constraints)
+    all_solutions: List[List[List[int]]] = []
 
+    #  If the board is solvable, continue solving using backtracking:
     if board:
         _helper_solve_nonogram(board, constraints, [], 0, all_solutions)
 
     return all_solutions
 
 
-def _helper_solve_nonogram(board, constraints, curr_sol, row_index, all_sol):
+#  TODO: the return type hint is not correct - find solution
+def _helper_solve_nonogram(board: List[List[int]],
+                           constraints: List[List[List[int]]],
+                           curr_sol: List[List[int]],
+                           row_index: int,
+                           all_sol: List[List[List[int]]]) -> \
+        Optional[List[List[List[int]]]]:
     """
-
-    :param board:
-    :param constraints:
-    :param curr_sol:
-    :param row_index:
-    :param all_sol:
-    :return:
+    This function uses recursion to help 'solve_nonogram()' accomplish its task
+    :param board: A partially solved nonogram board (list of rows).
+    :param constraints: The constraints on the rows and columns of the board.
+    :param curr_sol: The current solution, which is built recursively.
+    :param row_index: The index of the row that will be added to the solution.
+    :param all_sol: A list of valid solutions that were found.
+    :return: A list of all possible solutions of the nonogram puzzle.
     """
+    #  If the constraints were violated, the solution isn't valid. Quit:
     if curr_sol and not check_constraints(curr_sol, constraints[COL_INDEX]):
         return
+
     # base case:
     if len(curr_sol) == len(board):
         all_sol.append(curr_sol)
         return
 
-    # recursive step:
+    # Recursive step - try every row variation in order to find a solution:
     for row_variation in row_variations(board[row_index],
                                         constraints[ROW_INDEX][row_index]):
         _helper_solve_nonogram(board, constraints, curr_sol + [row_variation],
@@ -448,7 +504,7 @@ def _helper_solve_nonogram(board, constraints, curr_sol, row_index, all_sol):
 
 def split_line_to_blocks(line: List[int]) -> List[int]:
     """
-
+    TODO: add description
     :param line:
     :return:
     """
@@ -464,34 +520,37 @@ def split_line_to_blocks(line: List[int]) -> List[int]:
     return blocks if blocks[-1] != 0 else blocks[:-1]
 
 
-def blocks_match(curr_block, col_block, compare_last_block=True):
+def blocks_match(curr_blocks: List[int],
+                 col_blocks: List[int],
+                 compare_last_block: bool = True) -> bool:
     """
-
-    :param curr_block:
-    :param col_block:
+    TODO: add description
+    :param curr_blocks:
+    :param col_blocks:
     :param compare_last_block:
     :return:
     """
-    if len(curr_block) > len(col_block):
+    if len(curr_blocks) > len(col_blocks):
         return False
 
-    last_block_to_check = len(curr_block) - 1
+    last_block_to_check: int = len(curr_blocks) - 1
 
     for block_index in range(last_block_to_check):
-        if curr_block[block_index] != col_block[block_index]:
+        if curr_blocks[block_index] != col_blocks[block_index]:
             return False
 
-    if compare_last_block and curr_block[-1] != col_block[last_block_to_check]:
+    if compare_last_block and curr_blocks[-1] != col_blocks[last_block_to_check]:
         return False
 
-    elif not compare_last_block and curr_block[-1] >\
-            col_block[last_block_to_check]:
+    elif not compare_last_block and curr_blocks[-1] >\
+            col_blocks[last_block_to_check]:
         return False
 
     return True
 
 
-def check_constraints(curr_solution, column_constraints):
+def check_constraints(curr_solution: List[List[int]],
+                      column_constraints: List[List[int]]) -> bool:
     """
     This function checks if a given partial solution of the nonogram (given as
     rows) meets the column constraints
