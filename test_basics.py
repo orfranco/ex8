@@ -35,7 +35,7 @@ INTERSECTION_ROWS = (
 
 ROW_VARIATIONS = (
     # empty row
-    (([], []), [[]]),
+    # (([], []), [[]]),
     # full row
     (([1, 1, 0], [2]), [[1, 1, 0]]),
     # all options
