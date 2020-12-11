@@ -54,25 +54,31 @@ BOARD_TO_PRINT = [
 
 def constraint_satisfactions(n: int, blocks: List[int]) -> List[List[int]]:
     """
-    TODO: add general description
+    this function returns a list of rows with length n,
+                            that satisfacts all the constraints given.
     :param n: the length of the row - positive int.
     :param blocks: the constraints on a row. every number in the list is a
                     sequence of cells to be filled.
     :return: all filling options of a row with the given constraints. doesn't
             matter the order.
     """
-    lst: List = []
-
+    all_opt = []
     if n > 0:
-        _helper_constraint_satisfaction(n, blocks, 0, [], lst)
-
-    return lst
+        _helper_constraint_satisfaction(n, blocks, 0, [], all_opt)
+    return all_opt
 
 
 def check_space(curr_block: int, blocks: List[int]) -> int:
-    # TODO: Add docstring
-    # not with sum because its more efficient.
-    summ: int = 0
+    """
+    this functions calculates the minimum number of cells
+                                    needed to match the constraints left.
+    :param curr_block: index in blocks representing the block
+                        after the last block that was inserted to the row.
+    :param blocks: all the constraints given.
+    :return: the minimum number of cells needed to match the constraints left.
+    """
+    # not with sum() because its more efficient.
+    summ = 0
     left_blocks_counter = 0
 
     for i in range(curr_block, len(blocks)):
@@ -82,15 +88,20 @@ def check_space(curr_block: int, blocks: List[int]) -> int:
     return summ + left_blocks_counter - 1
 
 
-def _helper_constraint_satisfaction(n, blocks, curr_block, curr_row, all_opt):
+def _helper_constraint_satisfaction(n: int, blocks: List[int],
+                                    curr_block: int, curr_row: List[int],
+                                    all_opt: List[List[int]])\
+                                    -> Optional[List[List[int]]]:
     """
-    TODO: add general description
-    :param n:
-    :param blocks:
-    :param curr_block:
-    :param curr_row:
-    :param all_opt:
-    :return:
+    this is a recursive function that finds all the options to
+     satisfact the constraints given in a row with length n.
+    :param n: the length of the row.
+    :param blocks: the constraints.
+    :param curr_block: index in blocks needed to be inserted to curr_row.
+    :param curr_row: the specific row being formed.
+    :param all_opt: a list that will be filled by all the correct options.
+    :return: all filling options of a row with the given constraints. doesn't
+            matter the order.
     """
     # base cases: all cells are filled:
     if len(curr_row) == n:
@@ -123,8 +134,8 @@ def _helper_constraint_satisfaction(n, blocks, curr_block, curr_row, all_opt):
 
 def row_variations(row: List[int], blocks: List[int]) -> List[List[int]]:
     """
-    TODO: add general description
-    TODO: blocks contain [-1]?
+    this function gets a row that is partially filled, and finds all the ways
+    to fill it still matching the constraints.
     :param row: a list of 1,0,-1 representing the state of the row.
     1 - filled cell.
     0 - empty cell.
@@ -134,18 +145,29 @@ def row_variations(row: List[int], blocks: List[int]) -> List[List[int]]:
     :return: all filling options of the undefined cells in the given row
                     with the given constraints.
     """
-    lst: List = []
+    all_variations = []
 
-    if len(row) > 0:
-        _helper_row_variations(row, blocks, 0, [], lst, 0)
+    if len(row) >= 0:
+        _helper_row_variations(row, blocks, 0, [], all_variations, 0)
+    return all_variations
 
-    return lst
 
+#TODO: think if we can do it better with check_constraints function.
+def _helper_row_variations(row: List[int], blocks: List[int], curr_block: int,
+                           curr_row: List[int], all_opt: List[List[int]],
+                           curr_index: int) -> Optional[List[List[int]]]:
+    """
 
-def _helper_row_variations(row, blocks, curr_block, curr_row, all_opt,
-                           curr_index):
-    # TODO: Add docstring.
-    # TODO: Add type hints.
+    :param row: a list of 1,0,-1 representing the state of the row.
+    :param blocks: all constraints of the row needed to be formed.
+    :param curr_block: the index of the current block needed to be
+                                                    inserted to curr_row.
+    :param curr_row: the current row being formed.
+    :param all_opt: a list that will be filled by all the correct options.
+    :param curr_index: the current index in row being inserted to curr_row.
+    :return: all filling options of the undefined cells in the given row
+                    with the given constraints.
+    """
     is_good_for_1 = True
     # Will remain false as long as the current block is not done:
     is_good_for_0 = False
@@ -170,7 +192,7 @@ def _helper_row_variations(row, blocks, curr_block, curr_row, all_opt,
         is_good_for_0 = True
         # if the total block size is bigger than the number of
         # remaining cells, the solution is invalid:
-        if sum_of_remaining_blocks(curr_block, blocks) > \
+        if len(curr_row) > 0 and sum_of_remaining_blocks(curr_block, blocks) >\
                 count_row_editable_cells(curr_index, row):
             return
 
@@ -214,16 +236,15 @@ def _helper_row_variations(row, blocks, curr_block, curr_row, all_opt,
 
 def get_pivot(curr_row: List[int]) -> int:
     """
-    TODO: add general description
-    :param curr_row:
-    :return:
+    this function gets a list with 1 on the last cell,
+    and returns the index of the first 1 in the sequence.
+    :param curr_row: a row that has 1 in the last cell.
+    :return: the index of the first 1 in the sequence.
     """
     pivot_index = len(curr_row)
-
     for i in range(len(curr_row) - 1, -1, -1):
         if curr_row[i] == 0:
             break
-
         pivot_index -= 1
 
     return pivot_index
@@ -231,12 +252,12 @@ def get_pivot(curr_row: List[int]) -> int:
 
 def sum_of_remaining_blocks(curr_block: int, blocks: List[int]) -> int:
     """
-    TODO: add general description
-    :param curr_block:
-    :param blocks:
-    :return:
+    this function calculates the sum of the values in remaining blocks.
+    :param curr_block: the index of the current block.
+    :param blocks: a list of all constraints.
+    :return: the sum of the values from curr_block to last index in blocks.
     """
-    summ: int = 0
+    summ = 0
 
     for i in range(curr_block, len(blocks)):
         summ += blocks[i]
@@ -246,10 +267,10 @@ def sum_of_remaining_blocks(curr_block: int, blocks: List[int]) -> int:
 
 def count_row_editable_cells(curr_index: int, row: List[int]) -> int:
     """
-    TODO: add general description
-    :param curr_index:
-    :param row:
-    :return:
+    this function counts the number of cells that contains -1 or 1.
+    :param curr_index: the current index being filled in curr_row, from row.
+    :param row: a list of 1,0,-1 representing the state of the row.
+    :return: the number of cells that contain -1 or 1.
     """
     counter = 0
 
@@ -260,9 +281,16 @@ def count_row_editable_cells(curr_index: int, row: List[int]) -> int:
     return counter
 
 
-def find_1_in_row(row, curr_index):
-    # TODO: Add docstring.
-    # TODO: Add type hints.
+def find_1_in_row(row: List[int], curr_index: int) -> bool:
+    """
+    this function returns true if the row contains 1 in the section between
+    curr_index till the end of the row.
+    :param row: a list of 1,0,-1 representing the state of the row.
+    :param curr_index: the current index being filled in curr_row, from row.
+    :return: True if the row contains 1 in the section between curr_index
+    till the end of the row.
+    """
+
     for i in range(curr_index, len(row)):
         if row[i] == 1:
             return True
