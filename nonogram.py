@@ -102,16 +102,27 @@ def row_variations(row: List[int], blocks: List[int]) -> List[List[int]]:
         return [[]]
     return all_variations
 
+def is_1_in_row(row,curr_index):
+    for i in range(curr_index,len(row)):
+        if row[i] == 1:
+            return True
+    return False
+
 
 def _helper_row_variations(row, blocks, curr_row, all_opt, curr_index):
     is_blocks_matching, filled_blocks = \
                         check_constraint_for_line(curr_row, blocks, row)
     if not is_blocks_matching:
         return
+    if filled_blocks == blocks:
+        if is_1_in_row(row,curr_index):
+            return
+        else:
+            curr_row += [0]* (len(row) - len(curr_row))
+        if len(curr_row) == len(row):
+            all_opt.append(curr_row)
+            return
     # Base case:
-    if len(curr_row) == len(row) and filled_blocks == blocks:
-        all_opt.append(curr_row)
-        return
     if curr_index >= len(row):
         return
     # recursive steps:
