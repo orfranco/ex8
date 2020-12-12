@@ -780,7 +780,7 @@ def test_solve_easy_nonogram():
     output = [[1, 0, 0], [1, 1, 0], [1, 0, 1], ]
     assert solve_easy_nonogram(input) == output
     input_none = [[[1], [2], [2]], [[2], [1, 1], [1]]]
-    assert solve_easy_nonogram(input_none) is None, "For impossible constraints, return None"
+    assert solve_easy_nonogram(input_none) is None, "For impossible line_constraints, return None"
 
     input_unknown = [[[1], [1]], [[1], [1]]]
     output_unknown = [[-1, -1], [-1, -1]]
