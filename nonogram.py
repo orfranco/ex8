@@ -67,8 +67,8 @@ def constraint_satisfactions(n: int, blocks: List[int]) -> List[List[int]]:
     :param n: the length of the row - positive int.
     :param blocks: the line_constraints on a row. every number in the list is a
                     sequence of cells to be filled.
-    :return: all filling options of a row with the given line_constraints. doesn't
-            matter the order.
+    :return: all filling options of a row with the given line_constraints,
+                doesn't matter the order.
     """
     all_opt: List[List[int]] = []
 
@@ -81,8 +81,8 @@ def constraint_satisfactions(n: int, blocks: List[int]) -> List[List[int]]:
 def row_variations(row: List[int], blocks: List[int]) -> List[List[int]]:
     """
     this function gets a row that is partially filled, and finds all the ways
-    to fill it according to the given line_constraints, by using a helper function:
-    '_helper_row_variations'.
+    to fill it according to the given line_constraints,
+    by using a helper function: '_helper_row_variations'.
     :param row: a list of 1,0,-1 representing the state of the row.
     1 - filled cell.
     0 - empty cell.
@@ -101,65 +101,6 @@ def row_variations(row: List[int], blocks: List[int]) -> List[List[int]]:
             return []
         return [[]]
     return all_variations
-
-
-def _helper_row_variations(row: List[int], blocks: List[int],
-                           curr_row: List[int],
-                           all_opt: List[List[int]],
-                           curr_index: int) -> Optional[List[List[int]]]:
-    """
-    This function uses recursion in order to help 'row_variations()'
-    accomplish its task.
-    :param row: a list of 1,0,-1 representing the state of the row.
-    :param blocks: all line_constraints of the row needed to be formed.
-    :param blocks: all line_constraints on the row needed to be met.
-    :param curr_row: the current row being formed.
-    :param all_opt: a list that will be filled by all the correct options.
-    :param curr_index: the current index in row being inserted to curr_row.
-    :return: all filling options of the undefined cells in the given row
-                    with the given line_constraints.
-    """
-
-    is_blocks_matching, filled_blocks = \
-        check_constraint_for_line(curr_row, blocks)
-    # validates the last fill:
-    if not is_blocks_matching:
-        return None
-    # if all the blocks were filled:
-    if filled_blocks == blocks:
-        # if an extra 1 was found, the solution is invalid.
-        if is_1_in_row(row, curr_index):
-            return None
-        # fill the rest of the row with 0's
-        else:
-            curr_row += [0] * (len(row) - len(curr_row))
-        # Base case:
-        if len(curr_row) == len(row):
-            all_opt.append(curr_row)
-            return None
-    # if curr_row is at full length but the
-    # blocks aren't filled, solution is invalid.
-    if curr_index >= len(row):
-        return None
-
-    # recursive steps:
-    if row[curr_index] == UNFILLED_CELL:
-        _helper_row_variations(row, blocks,
-                               curr_row + [COLORED_CELL],
-                               all_opt, curr_index + 1)
-        _helper_row_variations(row, blocks,
-                               curr_row + [EMPTY_CELL],
-                               all_opt, curr_index + 1)
-    elif row[curr_index] == COLORED_CELL:
-        _helper_row_variations(row, blocks,
-                               curr_row + [COLORED_CELL],
-                               all_opt, curr_index + 1)
-    else:  # if EMPTY_CELL
-        _helper_row_variations(row, blocks,
-                               curr_row + [EMPTY_CELL],
-                               all_opt, curr_index + 1)
-
-    return all_opt
 
 
 def intersection_row(rows: List[List[int]]) -> List[int]:
@@ -283,8 +224,8 @@ def _helper_constraint_satisfaction(n: int, blocks: List[int],
     :param curr_block: index in blocks needed to be inserted to curr_row.
     :param curr_row: the specific row being formed.
     :param all_options: a list that will be filled by all the correct options.
-    :return: all filling options of a row with the given line_constraints. doesn't
-            matter the order.
+    :return: all filling options of a row with the given line_constraints,
+            doesn't matter the order.
     """
     # base cases: all cells are filled:
     if len(curr_row) == n:
@@ -315,6 +256,65 @@ def _helper_constraint_satisfaction(n: int, blocks: List[int],
     return all_options
 
 
+def _helper_row_variations(row: List[int], blocks: List[int],
+                           curr_row: List[int],
+                           all_opt: List[List[int]],
+                           curr_index: int) -> Optional[List[List[int]]]:
+    """
+    This function uses recursion in order to help 'row_variations()'
+    accomplish its task.
+    :param row: a list of 1,0,-1 representing the state of the row.
+    :param blocks: all line_constraints of the row needed to be formed.
+    :param blocks: all line_constraints on the row needed to be met.
+    :param curr_row: the current row being formed.
+    :param all_opt: a list that will be filled by all the correct options.
+    :param curr_index: the current index in row being inserted to curr_row.
+    :return: all filling options of the undefined cells in the given row
+                    with the given line_constraints.
+    """
+
+    is_blocks_matching, filled_blocks = \
+        check_constraint_for_line(curr_row, blocks)
+    # validates the last fill:
+    if not is_blocks_matching:
+        return None
+    # if all the blocks were filled:
+    if filled_blocks == blocks:
+        # if an extra 1 was found, the solution is invalid.
+        if is_1_in_row(row, curr_index):
+            return None
+        # fill the rest of the row with 0's
+        else:
+            curr_row += [0] * (len(row) - len(curr_row))
+        # Base case:
+        if len(curr_row) == len(row):
+            all_opt.append(curr_row)
+            return None
+    # if curr_row is at full length but the
+    # blocks aren't filled, solution is invalid.
+    if curr_index >= len(row):
+        return None
+
+    # recursive steps:
+    if row[curr_index] == UNFILLED_CELL:
+        _helper_row_variations(row, blocks,
+                               curr_row + [COLORED_CELL],
+                               all_opt, curr_index + 1)
+        _helper_row_variations(row, blocks,
+                               curr_row + [EMPTY_CELL],
+                               all_opt, curr_index + 1)
+    elif row[curr_index] == COLORED_CELL:
+        _helper_row_variations(row, blocks,
+                               curr_row + [COLORED_CELL],
+                               all_opt, curr_index + 1)
+    else:  # if EMPTY_CELL
+        _helper_row_variations(row, blocks,
+                               curr_row + [EMPTY_CELL],
+                               all_opt, curr_index + 1)
+
+    return all_opt
+
+
 def _helper_solve_nonogram(board: List[List[int]],
                            constraints: List[List[List[int]]],
                            curr_sol: List[List[int]],
@@ -324,7 +324,7 @@ def _helper_solve_nonogram(board: List[List[int]],
     """
     This function uses recursion to help 'solve_nonogram()' accomplish its task
     :param board: A partially solved nonogram board (list of rows).
-    :param constraints: The line_constraints on the rows and columns of the board.
+    :param constraints: The constraints on the rows and columns of the board.
     :param curr_sol: The current solution, which is built recursively.
     :param row_index: The index of the row that will be added to the solution.
     :param all_sol: A list of valid solutions that were found.
@@ -356,7 +356,7 @@ def check_space(curr_block: int, blocks: List[int]) -> int:
     :param curr_block: Index in blocks representing the block
                         after the last block that was inserted to the row.
     :param blocks: All the line_constraints given.
-    :return: The minimum number of cells needed to match the line_constraints left.
+    :return: The minimum number of cells needed to match the constraints left.
     """
     # not with sum() because its more efficient.
     summ = 0
@@ -380,7 +380,7 @@ def is_1_in_row(row: List[int], curr_index: int) -> bool:
       :return: True if the row contains 1 in the section between curr_index
       till the end of the row.
       """
-    for i in range(curr_index,len(row)):
+    for i in range(curr_index, len(row)):
         if row[i] == 1:
             return True
     return False
@@ -405,7 +405,7 @@ def update_line(line: List[int], blocks: List[int]) -> List[int]:
     possibilities - meaning fills every cell of the given line with 1 or with 0
     if there is one way only to fill it.
     :param line: A row or a column (list of ints).
-    :param blocks: The line_constraints on the line. Every number in the list is a
+    :param blocks: The constraints on the line. Every number in the list is a
                     sequence of cells to be filled.
     :return: An updated version of the given line - if it was possible to fill
     some of it's cells,
@@ -478,7 +478,8 @@ def blocks_match(curr_blocks: List[int],
         if curr_blocks[block_index] != col_blocks[block_index]:
             return False
 
-    if compare_last_block and curr_blocks[-1] != col_blocks[last_block_to_check]:
+    if compare_last_block and curr_blocks[-1] !=\
+            col_blocks[last_block_to_check]:
         return False
 
     elif not compare_last_block and curr_blocks[-1] > \
